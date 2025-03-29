@@ -10,6 +10,10 @@ class AuthProvider with ChangeNotifier {
   User? get user => _user;
   String? get userRole => _userRole;
 
+  AuthProvider() {
+    initialize();
+  }
+
   Future<void> initialize() async {
     _user = SupabaseConfig.client.auth.currentUser;
     if (_user != null) {
@@ -21,14 +25,21 @@ class AuthProvider with ChangeNotifier {
   Future<void> _fetchUserRole() async {
     if (_user == null) return;
     
-    final response = await SupabaseConfig.client
-        .from('users')
-        .select('role')
-        .eq('id', _user!.id)
-        .single();
-    
-    _userRole = response['role'] as String?;
-    notifyListeners();
+    try {
+      final response = await SupabaseConfig.client
+          .from('users')
+          .select('role')
+          .eq('id', _user!.id)
+          .maybeSingle(); // Use maybeSingle to handle no rows or multiple rows
+      
+      _userRole = response?['role'] as String?;
+    } catch (e) {
+      // Log the error or handle it appropriately
+      print('Error fetching user role: $e');
+      _userRole = null;
+    } finally {
+      notifyListeners();
+    }
   }
 
   Future<void> signInWithEmail(String email, String password) async {

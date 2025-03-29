@@ -88,7 +88,7 @@ class _RequisitionDetailScreenState extends State<RequisitionDetailScreen> {
       final stageResponse = await SupabaseConfig.client
           .from('approval_stages')
           .select('id')
-          .eq('role_required', authProvider.userRole)
+          .eq('role_required', authProvider.userRole ?? '')
           .single();
           
       await SupabaseConfig.client.from('requisition_approvals').insert({
@@ -109,6 +109,14 @@ class _RequisitionDetailScreenState extends State<RequisitionDetailScreen> {
         _isRejecting = false;
       });
     }
+  }
+
+  void _navigateToDocumentUpload() {
+    Navigator.pushNamed(
+      context, 
+      '/documents/upload', 
+      arguments: widget.requisitionId
+    );
   }
 
   @override
@@ -227,16 +235,7 @@ class _RequisitionDetailScreenState extends State<RequisitionDetailScreen> {
                   TextButton.icon(
                     icon: const Icon(Icons.upload),
                     label: const Text('Add Document'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DocumentUploadScreen(
-                            requisitionId: widget.requisitionId,
-                          ),
-                        ),
-                      ).then((_) => _fetchDocuments());
-                    },
+                    onPressed: _navigateToDocumentUpload,
                   ),
               ],
             ),

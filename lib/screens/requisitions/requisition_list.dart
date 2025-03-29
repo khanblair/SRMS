@@ -37,7 +37,14 @@ class _RequisitionListScreenState extends State<RequisitionListScreen> {
       if (authProvider.isLecturer) {
         query.eq('lecturer_id', userId);
       } else if (authProvider.isHod) {
-        query.eq('department_id', authProvider.user?.departmentId);
+        // Fetch department ID for HOD from users table
+        final departmentResponse = await SupabaseConfig.client
+            .from('users')
+            .select('department_id')
+            .eq('id', userId)
+            .single();
+        
+        query.eq('department_id', departmentResponse['department_id'] ?? '');
       }
 
       final data = await query.order('created_at', ascending: false);

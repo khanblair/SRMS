@@ -53,13 +53,25 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: AuthForm(
-            isLogin: true,
-            formKey: _formKey,
-            emailController: _emailController,
-            passwordController: _passwordController,
-            isLoading: _isLoading,
-            onSubmit: _submit,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AuthForm(
+                isLogin: true,
+                formKey: _formKey,
+                emailController: _emailController,
+                passwordController: _passwordController,
+                isLoading: _isLoading,
+                onSubmit: _submit,
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+                child: const Text('Don\'t have an account? Register'),
+              ),
+            ],
           ),
         ),
       ),

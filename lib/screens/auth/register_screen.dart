@@ -26,12 +26,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       await authService.signUpWithEmail(
         _emailController.text,
         _passwordController.text,
+        _nameController.text, // Pass full name
       );
-      
-      // Update user profile with name
-      await authService.updateUserProfile({
-        'full_name': _nameController.text,
-      });
       
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
@@ -62,14 +58,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: AuthForm(
-            isLogin: false,
-            formKey: _formKey,
-            emailController: _emailController,
-            passwordController: _passwordController,
-            nameController: _nameController,
-            isLoading: _isLoading,
-            onSubmit: _submit,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AuthForm(
+                isLogin: false,
+                formKey: _formKey,
+                emailController: _emailController,
+                passwordController: _passwordController,
+                nameController: _nameController,
+                isLoading: _isLoading,
+                onSubmit: _submit,
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: const Text('Already have an account? Login'),
+              ),
+            ],
           ),
         ),
       ),
